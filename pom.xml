@@ -44,4 +44,10 @@
     </pluginRepository>
   </pluginRepositories>
 
+  <scm>
+    <connection>scm:git:git://github.com/jenkinsci/golang-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/golang-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/golang-plugin</url>
+  </scm>
+
 </project>
