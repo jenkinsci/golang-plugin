@@ -8,12 +8,14 @@ import hudson.model.TaskListener;
 import hudson.slaves.NodeSpecific;
 import hudson.tools.ToolDescriptor;
 import hudson.tools.ToolInstallation;
+import hudson.tools.ToolInstaller;
 import hudson.tools.ToolProperty;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 public class GolangInstallation extends ToolInstallation implements EnvironmentSpecific<GolangInstallation>,
@@ -47,6 +49,11 @@ public class GolangInstallation extends ToolInstallation implements EnvironmentS
         @Override
         public String getDisplayName() {
             return "Go";
+        }
+
+        @Override
+        public List<? extends ToolInstaller> getDefaultInstallers() {
+            return Collections.singletonList(new GolangInstaller(null));
         }
 
         @Override
