@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.golang;
 
+import com.google.common.annotations.VisibleForTesting;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.DownloadService;
@@ -15,6 +16,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -71,12 +74,21 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
 
         // Gather properties for the node to install on
         String[] properties = node.getChannel().call(new GetSystemProperties("os.name", "os.arch", "os.version"));
-        String platform = getPlatform(properties[0]);
-        String architecture = getArchitecture(properties[1]);
-        String osVersion = properties[2];
 
-        // Search for an appropriate variant
-        for (GolangInstallable i : release.variants) {
+        // Get the best matching install candidate for this node
+        return getInstallCandidate(release, properties[0], properties[1], properties[2]);
+    }
+
+    @VisibleForTesting
+    static GolangInstallable getInstallCandidate(GolangRelease release, String osName, String osArch, String osVersion)
+            throws InstallationFailedException {
+        String platform = getPlatform(osName);
+        String architecture = getArchitecture(osArch);
+
+        // Sort and search for an appropriate variant
+        List<GolangInstallable> variants = Arrays.asList(release.variants);
+        Collections.sort(variants);
+        for (GolangInstallable i : variants) {
             if (i.os.equals(platform) && i.arch.equals(architecture)) {
                 if (i.osxversion == null) {
                     return i;
@@ -87,8 +99,8 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
             }
         }
 
-        String osWithVersion = osVersion == null ? properties[0] : String.format("%s %s", properties[0], osVersion);
-        throw new InstallationFailedException(Messages.NoInstallerForOs(release.name, osWithVersion, properties[1]));
+        String osWithVersion = osVersion == null ? osName : String.format("%s %s", osName, osVersion);
+        throw new InstallationFailedException(Messages.NoInstallerForOs(release.name, osWithVersion, osArch));
     }
 
     private GolangRelease getConfiguredRelease() {
@@ -151,10 +163,24 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
     }
 
     // Needs to be public for JSON deserialisation
-    public static class GolangInstallable extends DownloadFromUrlInstaller.Installable {
+    public static class GolangInstallable extends Installable implements Comparable<GolangInstallable> {
         public String os;
         public String osxversion;
         public String arch;
+
+        public int compareTo(GolangInstallable o) {
+            // Sort by OS X version, descending
+            if (osxversion != null && o.osxversion != null) {
+                return new VersionNumber(o.osxversion).compareTo(new VersionNumber(osxversion));
+            }
+            // Otherwise we don't really care; sort by OS name
+            return os.compareTo(o.os);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("GolangInstallable[os=%s, arch=%s, version=%s]", os, arch, osxversion);
+        }
     }
 
     /** @return The OS value used in a Go archive filename, for the given {@code os.name} value. */
@@ -207,7 +233,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
     }
 
     // Extend IOException so we can throw and stop the build if installation fails
-    private static class InstallationFailedException extends IOException {
+    static class InstallationFailedException extends IOException {
         InstallationFailedException(String message) {
             super(message);
         }
