@@ -10,16 +10,16 @@ import static org.junit.Assert.assertEquals;
 public class GolangInstallerTest {
 
     // These are definitions of available Go packages, as would be listed in the Jenkins installer JSON
-    private static final GolangInstallable FREEBSD_32 = createPackage("freebsd", "386", null);
-    private static final GolangInstallable FREEBSD_64 = createPackage("freebsd", "amd64", null);
-    private static final GolangInstallable LINUX_32 = createPackage("linux", "386", null);
-    private static final GolangInstallable LINUX_64 = createPackage("linux", "amd64", null);
+    private static final GolangInstallable FREEBSD_32 = createPackage("freebsd", "386");
+    private static final GolangInstallable FREEBSD_64 = createPackage("freebsd", "amd64");
+    private static final GolangInstallable LINUX_32 = createPackage("linux", "386");
+    private static final GolangInstallable LINUX_64 = createPackage("linux", "amd64");
     private static final GolangInstallable OS_X_10_6_32 = createPackage("darwin", "386", "10.6");
     private static final GolangInstallable OS_X_10_6_64 = createPackage("darwin", "amd64", "10.6");
     private static final GolangInstallable OS_X_10_8_32 = createPackage("darwin", "386", "10.8");
     private static final GolangInstallable OS_X_10_8_64 = createPackage("darwin", "amd64", "10.8");
     // As of Go 1.5, there is only a single OS X build distributed, with no OS X version set
-    private static final GolangInstallable OS_X_GO_1_5 = createPackage("darwin", "amd64", null);
+    private static final GolangInstallable OS_X_GO_1_5 = createPackage("darwin", "amd64");
 
     @Test(expected = InstallationFailedException.class)
     public void testUnsupportedOs() throws InstallationFailedException {
@@ -159,6 +159,10 @@ public class GolangInstallerTest {
         GolangRelease release = new GolangRelease();
         release.variants = releases;
         return release;
+    }
+
+    private static GolangInstallable createPackage(String os, String arch) {
+        return createPackage(os, arch, null);
     }
 
     private static GolangInstallable createPackage(String os, String arch, String osxVersion) {
