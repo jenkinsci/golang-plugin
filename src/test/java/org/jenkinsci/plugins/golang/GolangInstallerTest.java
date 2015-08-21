@@ -11,8 +11,10 @@ public class GolangInstallerTest {
 
     private static final GolangInstallable LINUX_32 = createPackage("linux", "386", null);
     private static final GolangInstallable LINUX_64 = createPackage("linux", "amd64", null);
-    private static final GolangInstallable OS_X_10_6 = createPackage("darwin", "amd64", "10.6");
-    private static final GolangInstallable OS_X_10_8 = createPackage("darwin", "amd64", "10.8");
+    private static final GolangInstallable OS_X_10_6_32 = createPackage("darwin", "386", "10.6");
+    private static final GolangInstallable OS_X_10_6_64 = createPackage("darwin", "amd64", "10.6");
+    private static final GolangInstallable OS_X_10_8_32 = createPackage("darwin", "386", "10.8");
+    private static final GolangInstallable OS_X_10_8_64 = createPackage("darwin", "amd64", "10.8");
     // As of Go 1.5, there is only a single OS X build distributed, with no OS X version set
     private static final GolangInstallable OS_X_GO_1_5 = createPackage("darwin", "amd64", null);
 
@@ -48,7 +50,19 @@ public class GolangInstallerTest {
         GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "Mac OS X", "x86_64", "10.11.12");
 
         // Then we should get the newest package which is older than our version
-        assertEquals("Got unexpected package", OS_X_10_8, pkg);
+        assertEquals("Got unexpected package", OS_X_10_8_64, pkg);
+    }
+
+    @Test
+    public void testLatestPackageFor32BitOsXVersionReturned() throws InstallationFailedException {
+        // Given we have configured a release we want to install
+        GolangRelease release = createReleaseInfo();
+
+        // When we try to get the install package for a much newer 32-bit OS X version
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "Mac OS X", "i386", "10.11.12");
+
+        // Then we should get the newest package which is older than our version
+        assertEquals("Got unexpected package", OS_X_10_8_32, pkg);
     }
 
     @Test
@@ -60,7 +74,19 @@ public class GolangInstallerTest {
         GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "Mac OS X", "x86_64", "10.7");
 
         // Then we should get the newest package which is older than our version
-        assertEquals("Got unexpected package", OS_X_10_6, pkg);
+        assertEquals("Got unexpected package", OS_X_10_6_64, pkg);
+    }
+
+    @Test
+    public void testEarlierPackageFor32BitOsXVersionReturned() throws InstallationFailedException {
+        // Given we have configured a release we want to install
+        GolangRelease release = createReleaseInfo();
+
+        // When we try to get the install package for an older, but supported 32-bit OS X version
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "Mac OS X", "i386", "10.7");
+
+        // Then we should get the newest 32-bit package which is older than our version
+        assertEquals("Got unexpected package", OS_X_10_6_32, pkg);
     }
 
     @Test
@@ -72,7 +98,7 @@ public class GolangInstallerTest {
         GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "Mac OS X", "x86_64", "10.6");
 
         // Then we should get the package which matches the given version exactly
-        assertEquals("Got unexpected package", OS_X_10_6, pkg);
+        assertEquals("Got unexpected package", OS_X_10_6_64, pkg);
     }
 
     @Test(expected = InstallationFailedException.class)
@@ -87,7 +113,7 @@ public class GolangInstallerTest {
     }
 
     private static GolangRelease createReleaseInfo() {
-        return createReleaseInfo(LINUX_32, LINUX_64, OS_X_10_6, OS_X_10_8);
+        return createReleaseInfo(LINUX_32, LINUX_64, OS_X_10_6_32, OS_X_10_6_64, OS_X_10_8_32, OS_X_10_8_64);
     }
 
     private static GolangRelease createReleaseInfo(GolangInstallable... releases) {
