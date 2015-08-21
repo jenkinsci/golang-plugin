@@ -13,6 +13,8 @@ public class GolangInstallerTest {
     private static final GolangInstallable LINUX_64 = createPackage("linux", "amd64", null);
     private static final GolangInstallable OS_X_10_6 = createPackage("darwin", "amd64", "10.6");
     private static final GolangInstallable OS_X_10_8 = createPackage("darwin", "amd64", "10.8");
+    // As of Go 1.5, there is only a single OS X build distributed, with no OS X version set
+    private static final GolangInstallable OS_X_GO_1_5 = createPackage("darwin", "amd64", null);
 
     @Test(expected = InstallationFailedException.class)
     public void testUnsupportedOs() throws InstallationFailedException {
@@ -23,6 +25,18 @@ public class GolangInstallerTest {
         GolangInstaller.getInstallCandidate(release, "Android", "armv7a", null);
 
         // Then an exception should be thrown
+    }
+
+    @Test
+    public void testLatestGo15PackageForOsXVersionReturned() throws InstallationFailedException {
+        // Given we have configured a Go 1.5 release we want to install
+        GolangRelease release = createReleaseInfo(LINUX_32, LINUX_64, OS_X_GO_1_5);
+
+        // When we try to get the install package for an OS X version
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "Mac OS X", "x86_64", "10.11.12");
+
+        // Then we should get the sole OS X package
+        assertEquals("Got unexpected package", OS_X_GO_1_5, pkg);
     }
 
     @Test
@@ -73,13 +87,12 @@ public class GolangInstallerTest {
     }
 
     private static GolangRelease createReleaseInfo() {
+        return createReleaseInfo(LINUX_32, LINUX_64, OS_X_10_6, OS_X_10_8);
+    }
+
+    private static GolangRelease createReleaseInfo(GolangInstallable... releases) {
         GolangRelease release = new GolangRelease();
-        release.variants = new GolangInstallable[] {
-                LINUX_32,
-                LINUX_64,
-                OS_X_10_6,
-                OS_X_10_8
-        };
+        release.variants = releases;
         return release;
     }
 
