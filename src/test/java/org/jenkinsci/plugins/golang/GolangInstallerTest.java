@@ -9,6 +9,9 @@ import static org.junit.Assert.assertEquals;
 
 public class GolangInstallerTest {
 
+    // These are definitions of available Go packages, as would be listed in the Jenkins installer JSON
+    private static final GolangInstallable FREEBSD_32 = createPackage("freebsd", "386", null);
+    private static final GolangInstallable FREEBSD_64 = createPackage("freebsd", "amd64", null);
     private static final GolangInstallable LINUX_32 = createPackage("linux", "386", null);
     private static final GolangInstallable LINUX_64 = createPackage("linux", "amd64", null);
     private static final GolangInstallable OS_X_10_6_32 = createPackage("darwin", "386", "10.6");
@@ -27,6 +30,41 @@ public class GolangInstallerTest {
         GolangInstaller.getInstallCandidate(release, "Android", "armv7a", null);
 
         // Then an exception should be thrown
+    }
+
+    @Test
+    public void testFreeBsdInstallation() throws InstallationFailedException {
+        // Given we have configured a release we want to install
+        GolangRelease release = createReleaseInfo();
+
+        // When we try to get the install package for FreeBSD
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "FreeBSD", "amd64", "10.2-RELEASE");
+
+        // Then we should get the correct FreeBSD package
+        assertEquals("Got unexpected package", FREEBSD_64, pkg);
+    }
+
+    @Test
+    public void testFreeBsd32BitInstallation() throws InstallationFailedException {
+        // Given we have configured a release we want to install
+        GolangRelease release = createReleaseInfo();
+
+        // When we try to get the install package for FreeBSD
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "FreeBSD", "i386", "10.2-RELEASE");
+
+        // Then we should get the correct FreeBSD package
+        assertEquals("Got unexpected package", FREEBSD_32, pkg);
+    }
+
+    @Test(expected = InstallationFailedException.class)
+    public void testUnsupportedFreeBsd32BitInstallation() throws InstallationFailedException {
+        // Given we have configured a Go 1.5 release we want to install
+        GolangRelease release = createReleaseInfo(OS_X_GO_1_5, FREEBSD_64, LINUX_32, LINUX_64);
+
+        // When we try to get the install package for 32-bit FreeBSD
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "FreeBSD", "i386", "10.2-RELEASE");
+
+        // Then an exception should be thrown, as there is no 32-bit package
     }
 
     @Test
@@ -113,7 +151,8 @@ public class GolangInstallerTest {
     }
 
     private static GolangRelease createReleaseInfo() {
-        return createReleaseInfo(LINUX_32, LINUX_64, OS_X_10_6_32, OS_X_10_6_64, OS_X_10_8_32, OS_X_10_8_64);
+        return createReleaseInfo(FREEBSD_32, FREEBSD_64, LINUX_32, LINUX_64, OS_X_10_6_32, OS_X_10_6_64, OS_X_10_8_32,
+                OS_X_10_8_64);
     }
 
     private static GolangRelease createReleaseInfo(GolangInstallable... releases) {
