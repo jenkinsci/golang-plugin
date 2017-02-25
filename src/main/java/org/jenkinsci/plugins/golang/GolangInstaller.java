@@ -104,7 +104,12 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
     }
 
     private GolangRelease getConfiguredRelease() {
-        for (GolangRelease r : ((DescriptorImpl) getDescriptor()).getInstallableReleases()) {
+        List<GolangRelease> releases = ((DescriptorImpl) getDescriptor()).getInstallableReleases();
+        if (releases == null) {
+            return null;
+        }
+
+        for (GolangRelease r : releases) {
             if (r.id.equals(id)) {
                 return r;
             }
@@ -144,7 +149,12 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
             JSONObject root;
             try {
                 root = getData();
+                if (root == null) {
+                    // JSON file has not yet been downloaded by Jenkins
+                    return null;
+                }
             } catch (IOException e) {
+                // JSON parsing exception occurred
                 return null;
             }
 
