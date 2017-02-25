@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.golang;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.CopyOnWrite;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -24,9 +25,10 @@ public class GolangBuildWrapper extends BuildWrapper {
         this.goVersion = goVersion;
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         GolangInstallation installation = getGoInstallation();
-        if(installation != null) {
+        if (installation != null) {
             EnvVars env = build.getEnvironment(listener);
             env.overrideAll(build.getBuildVariables());
 
@@ -77,6 +79,7 @@ public class GolangBuildWrapper extends BuildWrapper {
             return true;
         }
 
+        @SuppressFBWarnings("EI_EXPOSE_REP")
         public GolangInstallation[] getInstallations() {
             return installations;
         }

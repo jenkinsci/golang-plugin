@@ -1,12 +1,12 @@
 package org.jenkinsci.plugins.golang;
 
 import com.google.common.annotations.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.DownloadService;
 import hudson.model.Node;
 import hudson.model.TaskListener;
-import hudson.remoting.Callable;
 import hudson.tools.DownloadFromUrlInstaller;
 import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstallerDescriptor;
@@ -66,6 +66,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         return expectedPath;
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     private Installable getInstallable(Node node) throws IOException, InterruptedException {
         // Get the Go release that we want to install
         GolangRelease release = getConfiguredRelease();
@@ -125,6 +126,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         }
 
         // Used by config.groovy to show a human-readable list of releases
+        @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
         public List<GolangRelease> getInstallableReleases()  {
             return GolangReleaseList.all().get(GolangReleaseList.class).toList();
         }
@@ -179,6 +181,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         public String osxversion;
         public String arch;
 
+        @SuppressFBWarnings("EQ_COMPARETO_USE_OBJECT_EQUALS")
         public int compareTo(GolangInstallable o) {
             // Sort by OS X version, descending
             if (osxversion != null && o.osxversion != null) {
