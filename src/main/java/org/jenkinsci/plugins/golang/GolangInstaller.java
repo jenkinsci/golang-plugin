@@ -11,6 +11,7 @@ import hudson.tools.DownloadFromUrlInstaller;
 import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstallerDescriptor;
 import hudson.util.VersionNumber;
+import jenkins.security.MasterToSlaveCallable;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -224,7 +225,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
     }
 
     /** Returns the values of the given Java system properties. */
-    private static class GetSystemProperties implements Callable<String[], InterruptedException> {
+    private static class GetSystemProperties extends MasterToSlaveCallable<String[], InterruptedException> {
         private static final long serialVersionUID = 1L;
 
         private final String[] properties;

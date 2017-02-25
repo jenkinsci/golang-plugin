@@ -11,6 +11,7 @@ import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstaller;
 import hudson.tools.ToolProperty;
 import jenkins.model.Jenkins;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public class GolangInstallation extends ToolInstallation implements EnvironmentS
     }
 
     @Extension
+    @Symbol("go")
     public static class DescriptorImpl extends ToolDescriptor<GolangInstallation> {
 
         @Override

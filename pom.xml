@@ -13,7 +13,7 @@
   <packaging>hpi</packaging>
 
   <properties>
-    <jenkins.version>1.565.1</jenkins.version>
+    <jenkins.version>1.642.3</jenkins.version>
   </properties>
 
   <name>Go Plugin</name>
@@ -33,6 +33,21 @@
       <url>http://opensource.org/licenses/MIT</url>
     </license>
   </licenses>
+
+  <dependencies>
+    <!-- Required for the @Symbol annotation -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>structs</artifactId>
+      <version>1.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-aggregator</artifactId>
+      <version>2.4</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
   <repositories>
