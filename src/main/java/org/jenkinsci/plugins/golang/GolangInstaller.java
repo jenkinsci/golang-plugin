@@ -224,6 +224,9 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         if (value.contains("86")) {
             return "386";
         }
+        if (value.contains("s390x")) {
+            return "s390x";
+        }
         throw new InstallationFailedException(Messages.UnsupportedCpuArch(arch));
     }
 
