@@ -17,7 +17,7 @@
   </properties>
 
   <name>Go Plugin</name>
-  <url>https://wiki.jenkins-ci.org/display/JENKINS/Go+Plugin</url>
+  <url>https://github.com/jenkinsci/golang-plugin</url>
   <description>Automatically installs and sets up the Go programming language (golang) tools for a build.</description>
   <developers>
     <developer>
