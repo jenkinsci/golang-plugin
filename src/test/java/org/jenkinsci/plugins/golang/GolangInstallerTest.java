@@ -14,6 +14,7 @@ public class GolangInstallerTest {
     private static final GolangInstallable FREEBSD_64 = createPackage("freebsd", "amd64");
     private static final GolangInstallable LINUX_32 = createPackage("linux", "386");
     private static final GolangInstallable LINUX_64 = createPackage("linux", "amd64");
+    private static final GolangInstallable LINUX_ARM64 = createPackage("linux", "arm64");
     private static final GolangInstallable OS_X_10_6_32 = createPackage("darwin", "386", "10.6");
     private static final GolangInstallable OS_X_10_6_64 = createPackage("darwin", "amd64", "10.6");
     private static final GolangInstallable OS_X_10_8_32 = createPackage("darwin", "386", "10.8");
@@ -59,7 +60,7 @@ public class GolangInstallerTest {
     @Test(expected = InstallationFailedException.class)
     public void testUnsupportedFreeBsd32BitInstallation() throws InstallationFailedException {
         // Given we have configured a Go 1.5 release we want to install
-        GolangRelease release = createReleaseInfo(OS_X_GO_1_5, FREEBSD_64, LINUX_32, LINUX_64);
+        GolangRelease release = createReleaseInfo(OS_X_GO_1_5, FREEBSD_64, LINUX_32, LINUX_64, LINUX_ARM64);
 
         // When we try to get the install package for 32-bit FreeBSD
         GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "FreeBSD", "i386", "10.2-RELEASE");
@@ -68,9 +69,21 @@ public class GolangInstallerTest {
     }
 
     @Test
+    public void testLinuxAarch64BitInstallation() throws InstallationFailedException {
+        // Given we have configured a release we want to install
+        GolangRelease release = createReleaseInfo();
+
+        // When we try to get the install package for Ubuntu ARM 64-bit (aka `aarch64`)
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "linux", "aarch64", "5.4.0");
+
+        // Then we should get the correct Linux ARM 64-bit package
+        assertEquals("Got unexpected package", LINUX_ARM64, pkg);
+    }
+
+    @Test
     public void testLatestGo15PackageForOsXVersionReturned() throws InstallationFailedException {
         // Given we have configured a Go 1.5 release we want to install
-        GolangRelease release = createReleaseInfo(LINUX_32, LINUX_64, OS_X_GO_1_5);
+        GolangRelease release = createReleaseInfo(LINUX_32, LINUX_64, LINUX_ARM64, OS_X_GO_1_5);
 
         // When we try to get the install package for an OS X version
         GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "Mac OS X", "x86_64", "10.11.12");
@@ -151,8 +164,8 @@ public class GolangInstallerTest {
     }
 
     private static GolangRelease createReleaseInfo() {
-        return createReleaseInfo(FREEBSD_32, FREEBSD_64, LINUX_32, LINUX_64, OS_X_10_6_32, OS_X_10_6_64, OS_X_10_8_32,
-                OS_X_10_8_64);
+        return createReleaseInfo(FREEBSD_32, FREEBSD_64, LINUX_32, LINUX_64, LINUX_ARM64,
+                OS_X_10_6_32, OS_X_10_6_64, OS_X_10_8_32, OS_X_10_8_64);
     }
 
     private static GolangRelease createReleaseInfo(GolangInstallable... releases) {

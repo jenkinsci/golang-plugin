@@ -221,6 +221,9 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         if (value.contains("amd64") || value.contains("86_64")) {
             return "amd64";
         }
+        if (value.contains("aarch64")) {
+            return "arm64";
+        }
         if (value.contains("86")) {
             return "386";
         }
