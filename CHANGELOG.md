@@ -1,5 +1,11 @@
 # Version history
 
+## Version 1.3
+December 20, 2020
+
+- Added support for installing Go on machines with 64-bit ARM (AArch64) CPU architecture ([#3](https://github.com/jenkinsci/golang-plugin/pull/3); thanks to [Sergei](https://github.com/serges147))
+- Increased required Jenkins version to 2.190.3
+
 ## Version 1.2
 February 25, 2017
 
