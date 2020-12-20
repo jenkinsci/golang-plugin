@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>2.23</version>
+    <version>4.14</version>
   </parent>
 
   <groupId>org.jenkins-ci.plugins</groupId>
@@ -13,7 +13,10 @@
   <packaging>hpi</packaging>
 
   <properties>
-    <jenkins.version>1.642.3</jenkins.version>
+    <jenkins.version>2.190.3</jenkins.version>
+    <jenkins.bom.artifactId>2.190.x</jenkins.bom.artifactId>
+    <jenkins.bom.version>16</jenkins.bom.version>
+    <java.level>8</java.level>
   </properties>
 
   <name>Go Plugin</name>
@@ -39,15 +42,38 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>structs</artifactId>
-      <version>1.6</version>
+      <version>1.20</version>
     </dependency>
+
+    <!-- Install Pipeline when running locally, for testing -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-aggregator</artifactId>
-      <version>2.4</version>
+      <version>2.6</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Install mock agent plugin when running locally, as it's very useful -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>mock-slave</artifactId>
+      <version>1.14</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Simplifies inclusion of plugins: https://github.com/jenkinsci/bom -->
+      <dependency>
+        <groupId>io.jenkins.tools.bom</groupId>
+        <artifactId>bom-${jenkins.bom.artifactId}</artifactId>
+        <version>${jenkins.bom.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
   <repositories>
