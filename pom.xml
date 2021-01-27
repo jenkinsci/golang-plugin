@@ -9,7 +9,7 @@
 
   <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>golang</artifactId>
-  <version>1.4</version>
+  <version>1.5-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <properties>
@@ -94,7 +94,7 @@
     <connection>scm:git:git://github.com/jenkinsci/golang-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/golang-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/golang-plugin</url>
-    <tag>golang-1.4</tag>
+    <tag>HEAD</tag>
   </scm>
 
 </project>
