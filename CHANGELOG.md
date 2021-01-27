@@ -1,5 +1,10 @@
 # Version history
 
+## Version 1.4
+January 27, 2021
+
+- Added support for installing Go on machines with 32-bit ARM CPU architecture
+
 ## Version 1.3
 December 20, 2020
 
