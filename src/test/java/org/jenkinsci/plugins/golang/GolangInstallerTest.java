@@ -2,6 +2,8 @@ package org.jenkinsci.plugins.golang;
 
 import org.junit.Test;
 
+import javax.annotation.Nullable;
+
 import static org.jenkinsci.plugins.golang.GolangInstaller.GolangInstallable;
 import static org.jenkinsci.plugins.golang.GolangInstaller.GolangRelease;
 import static org.jenkinsci.plugins.golang.GolangInstaller.InstallationFailedException;
@@ -14,6 +16,7 @@ public class GolangInstallerTest {
     private static final GolangInstallable FREEBSD_64 = createPackage("freebsd", "amd64");
     private static final GolangInstallable LINUX_32 = createPackage("linux", "386");
     private static final GolangInstallable LINUX_64 = createPackage("linux", "amd64");
+    private static final GolangInstallable LINUX_ARM32 = createPackage("linux", "armv6l");
     private static final GolangInstallable LINUX_ARM64 = createPackage("linux", "arm64");
     private static final GolangInstallable OS_X_10_6_32 = createPackage("darwin", "386", "10.6");
     private static final GolangInstallable OS_X_10_6_64 = createPackage("darwin", "amd64", "10.6");
@@ -69,12 +72,48 @@ public class GolangInstallerTest {
     }
 
     @Test
+    public void testLinuxArm32BitInstallation() throws InstallationFailedException {
+        // Given we have configured a release we want to install
+        GolangRelease release = createReleaseInfo();
+
+        // When we try to get the install package for Linux ARM 32-bit (aka `arm`)
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "linux", "arm", "5.4.0");
+
+        // Then we should get the correct Linux ARM 32-bit package
+        assertEquals("Got unexpected package", LINUX_ARM32, pkg);
+    }
+
+    @Test
+    public void testLinuxArm32BitInstallationAlias() throws InstallationFailedException {
+        // Given we have configured a release we want to install
+        GolangRelease release = createReleaseInfo();
+
+        // When we try to get the install package for Linux ARM 32-bit, with the CPU value `aarch32`
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "linux", "aarch32", "5.4.0");
+
+        // Then we should get the correct Linux ARM 32-bit package
+        assertEquals("Got unexpected package", LINUX_ARM32, pkg);
+    }
+
+    @Test
     public void testLinuxAarch64BitInstallation() throws InstallationFailedException {
         // Given we have configured a release we want to install
         GolangRelease release = createReleaseInfo();
 
-        // When we try to get the install package for Ubuntu ARM 64-bit (aka `aarch64`)
+        // When we try to get the install package for Linux ARM 64-bit (aka `aarch64`)
         GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "linux", "aarch64", "5.4.0");
+
+        // Then we should get the correct Linux ARM 64-bit package
+        assertEquals("Got unexpected package", LINUX_ARM64, pkg);
+    }
+
+    @Test
+    public void testLinuxArm64BitInstallationAlias() throws InstallationFailedException {
+        // Given we have configured a release we want to install
+        GolangRelease release = createReleaseInfo();
+
+        // When we try to get the install package for Linux ARM 64-bit, with the CPU value `arm64`
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "linux", "arm64", "5.4.0");
 
         // Then we should get the correct Linux ARM 64-bit package
         assertEquals("Got unexpected package", LINUX_ARM64, pkg);
@@ -164,7 +203,7 @@ public class GolangInstallerTest {
     }
 
     private static GolangRelease createReleaseInfo() {
-        return createReleaseInfo(FREEBSD_32, FREEBSD_64, LINUX_32, LINUX_64, LINUX_ARM64,
+        return createReleaseInfo(FREEBSD_32, FREEBSD_64, LINUX_32, LINUX_64, LINUX_ARM32, LINUX_ARM64,
                 OS_X_10_6_32, OS_X_10_6_64, OS_X_10_8_32, OS_X_10_8_64);
     }
 
@@ -174,11 +213,20 @@ public class GolangInstallerTest {
         return release;
     }
 
+    /**
+     * @param os The OS value used in a Go archive filename.
+     * @param arch The CPU architecture value used in a Go archive filename.
+     */
     private static GolangInstallable createPackage(String os, String arch) {
         return createPackage(os, arch, null);
     }
 
-    private static GolangInstallable createPackage(String os, String arch, String osxVersion) {
+    /**
+     * @param os The OS value used in a Go archive filename.
+     * @param arch The CPU architecture value used in a Go archive filename.
+     * @param osxVersion Mac OS X version name.
+     */
+    private static GolangInstallable createPackage(String os, String arch, @Nullable String osxVersion) {
         GolangInstallable pkg = new GolangInstallable();
         pkg.os = os;
         pkg.arch = arch;

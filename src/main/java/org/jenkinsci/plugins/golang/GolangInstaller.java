@@ -221,8 +221,14 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         if (value.contains("amd64") || value.contains("86_64")) {
             return "amd64";
         }
-        if (value.contains("aarch64")) {
+        // There seems to be no canonical documentation on what the `os.arch` values are for different ARM CPU types,
+        // and presumably there's no real guarantee of consistency between JVM vendors anyway.
+        // It _seems_ to be `aarch64` and `arm` for 64- and 32-bit, but let's also have some reasonable fallbacks…
+        if (value.contains("aarch64") || value.contains("arm64")) {
             return "arm64";
+        }
+        if (value.contains("aarch32") || value.contains("arm")) {
+            return "armv6l";
         }
         if (value.contains("86")) {
             return "386";
