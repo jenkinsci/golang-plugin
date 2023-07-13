@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+Automatically installs and sets up the Go programming language (golang) tools for a build.
+</div>
