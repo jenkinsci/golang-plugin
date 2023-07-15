@@ -15,8 +15,6 @@
 
   <properties>
     <jenkins.version>2.346.3</jenkins.version>
-    <jenkins.bom.artifactId>2.190.x</jenkins.bom.artifactId>
-    <jenkins.bom.version>16</jenkins.bom.version>
   </properties>
 
   <name>Go Plugin</name>
@@ -66,8 +64,8 @@
       <!-- Simplifies inclusion of plugins: https://github.com/jenkinsci/bom -->
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-${jenkins.bom.artifactId}</artifactId>
-        <version>${jenkins.bom.version}</version>
+        <artifactId>bom-2.346.x</artifactId>
+        <version>1763.v092b_8980a_f5e</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
