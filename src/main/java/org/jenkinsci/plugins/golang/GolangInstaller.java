@@ -206,6 +206,9 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         if (value.contains("linux")) {
             return "linux";
         }
+        if (value.contains("openbsd")) {
+            return "openbsd";
+        }
         if (value.contains("os x")) {
             return "darwin";
         }
