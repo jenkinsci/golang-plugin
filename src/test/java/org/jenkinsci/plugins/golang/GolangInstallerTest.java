@@ -18,6 +18,8 @@ public class GolangInstallerTest {
     private static final GolangInstallable LINUX_64 = createPackage("linux", "amd64");
     private static final GolangInstallable LINUX_ARM32 = createPackage("linux", "armv6l");
     private static final GolangInstallable LINUX_ARM64 = createPackage("linux", "arm64");
+    private static final GolangInstallable OPENBSD_32 = createPackage("openbsd", "386");
+    private static final GolangInstallable OPENBSD_64 = createPackage("openbsd", "amd64");
     private static final GolangInstallable OS_X_10_6_32 = createPackage("darwin", "386", "10.6");
     private static final GolangInstallable OS_X_10_6_64 = createPackage("darwin", "amd64", "10.6");
     private static final GolangInstallable OS_X_10_8_32 = createPackage("darwin", "386", "10.8");
@@ -63,7 +65,7 @@ public class GolangInstallerTest {
     @Test(expected = InstallationFailedException.class)
     public void testUnsupportedFreeBsd32BitInstallation() throws InstallationFailedException {
         // Given we have configured a Go 1.5 release we want to install
-        GolangRelease release = createReleaseInfo(OS_X_GO_1_5, FREEBSD_64, LINUX_32, LINUX_64, LINUX_ARM64);
+        GolangRelease release = createReleaseInfo(OS_X_GO_1_5, FREEBSD_64, LINUX_32, LINUX_64, LINUX_ARM64, OPENBSD_32, OPENBSD_64);
 
         // When we try to get the install package for 32-bit FreeBSD
         GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "FreeBSD", "i386", "10.2-RELEASE");
@@ -117,6 +119,30 @@ public class GolangInstallerTest {
 
         // Then we should get the correct Linux ARM 64-bit package
         assertEquals("Got unexpected package", LINUX_ARM64, pkg);
+    }
+
+    @Test
+    public void testOpenBsdInstallation() throws InstallationFailedException {
+        // Given we have configured a release we want to install
+        GolangRelease release = createReleaseInfo();
+
+        // When we try to get the install package for OpenBSD
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "OpenBSD", "amd64", "7.3");
+
+        // Then we should get the correct OpenBSD package
+        assertEquals("Got unexpected package", OPENBSD_64, pkg);
+    }
+
+    @Test
+    public void testOpenBsd32BitInstallation() throws InstallationFailedException {
+        // Given we have configured a release we want to install
+        GolangRelease release = createReleaseInfo();
+
+        // When we try to get the install package for OpenBSD
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "OpenBSD", "i386", "7.3");
+
+        // Then we should get the correct OpenBSD package
+        assertEquals("Got unexpected package", OPENBSD_32, pkg);
     }
 
     @Test
@@ -204,7 +230,7 @@ public class GolangInstallerTest {
 
     private static GolangRelease createReleaseInfo() {
         return createReleaseInfo(FREEBSD_32, FREEBSD_64, LINUX_32, LINUX_64, LINUX_ARM32, LINUX_ARM64,
-                OS_X_10_6_32, OS_X_10_6_64, OS_X_10_8_32, OS_X_10_8_64);
+                OPENBSD_32, OPENBSD_64, OS_X_10_6_32, OS_X_10_6_64, OS_X_10_8_32, OS_X_10_8_64);
     }
 
     private static GolangRelease createReleaseInfo(GolangInstallable... releases) {
