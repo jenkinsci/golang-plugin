@@ -16,6 +16,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         }
 
         String message = Messages.InstallingGoOnNode(installable.url, expectedPath, node.getDisplayName());
-        if (expectedPath.installIfNecessaryFrom(new URL(installable.url), log, message)) {
+        if (expectedPath.installIfNecessaryFrom(URI.create(installable.url).toURL(), log, message)) {
             expectedPath.child(".timestamp").delete(); // we don't use the timestamp
             FilePath base = findPullUpDirectory(expectedPath);
             if (base != null && base != expectedPath)
@@ -81,6 +82,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         return getInstallCandidate(release, properties[0], properties[1], properties[2]);
     }
 
+    @SuppressFBWarnings("NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD")
     @VisibleForTesting
     static GolangInstallable getInstallCandidate(GolangRelease release, String osName, String osArch, String osVersion)
             throws InstallationFailedException {
@@ -105,6 +107,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         throw new InstallationFailedException(Messages.NoInstallerForOs(release.name, osWithVersion, osArch));
     }
 
+    @SuppressFBWarnings("NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD")
     private GolangRelease getConfiguredRelease() {
         List<GolangRelease> releases = ((DescriptorImpl) getDescriptor()).getInstallableReleases();
         if (releases == null) {
@@ -161,7 +164,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
                 return null;
             }
 
-            Map<String, Class> classMap = new HashMap<String, Class>();
+            Map<String, Class<?>> classMap = new HashMap<>();
             classMap.put("releases", GolangRelease.class);
             classMap.put("variants", GolangInstallable.class);
             return ((GolangReleaseList) JSONObject.toBean(root, GolangReleaseList.class, classMap)).releases;
@@ -181,7 +184,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         public String osxversion;
         public String arch;
 
-        @SuppressFBWarnings("EQ_COMPARETO_USE_OBJECT_EQUALS")
+        @SuppressFBWarnings({"EQ_COMPARETO_USE_OBJECT_EQUALS", "NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"})
         public int compareTo(GolangInstallable o) {
             // Sort by OS X version, descending
             if (osxversion != null && o.osxversion != null) {
@@ -203,10 +206,13 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         if (value.contains("freebsd")) {
             return "freebsd";
         }
+        if (value.contains("openbsd")) {
+            return "openbsd";
+        }
         if (value.contains("linux")) {
             return "linux";
         }
-        if (value.contains("os x")) {
+        if (value.contains("os x") || value.contains("darwin") || value.contains("mac")) {
             return "darwin";
         }
         if (value.contains("windows")) {
@@ -218,7 +224,7 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
     /** @return The CPU architecture value used in a Go archive filename, for the given {@code os.arch} value. */
     private static String getArchitecture(String arch) throws InstallationFailedException {
         String value = arch.toLowerCase(Locale.ENGLISH);
-        if (value.contains("amd64") || value.contains("86_64")) {
+        if (value.contains("amd64") || value.contains("86_64") || value.contains("x86_64")) {
             return "amd64";
         }
         // There seems to be no canonical documentation on what the `os.arch` values are for different ARM CPU types,
@@ -235,6 +241,15 @@ public class GolangInstaller extends DownloadFromUrlInstaller {
         }
         if (value.contains("s390x")) {
             return "s390x";
+        }
+        if (value.contains("ppc64le") || value.contains("ppc64")) {
+            return "ppc64le";
+        }
+        if (value.contains("riscv64")) {
+            return "riscv64";
+        }
+        if (value.contains("loong64")) {
+            return "loong64";
         }
         throw new InstallationFailedException(Messages.UnsupportedCpuArch(arch));
     }

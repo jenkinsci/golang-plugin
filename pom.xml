@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.14</version>
+    <version>6.2250.va_d01d559a_209</version>
+    <relativePath />
   </parent>
 
   <groupId>org.jenkins-ci.plugins</groupId>
@@ -12,70 +13,87 @@
   <version>1.5-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
-  <properties>
-    <jenkins.version>2.190.3</jenkins.version>
-    <jenkins.bom.artifactId>2.190.x</jenkins.bom.artifactId>
-    <jenkins.bom.version>16</jenkins.bom.version>
-    <java.level>8</java.level>
-  </properties>
-
   <name>Go Plugin</name>
   <url>https://github.com/jenkinsci/golang-plugin</url>
   <description>Automatically installs and sets up the Go programming language (golang) tools for a build.</description>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+    </license>
+  </licenses>
+
   <developers>
     <developer>
       <id>orrc</id>
       <name>Christopher Orr</name>
       <email>chris@orr.me.uk</email>
     </developer>
+    <developer>
+      <id>redersoft</id>
+      <name>Caleb Reder</name>
+      <email>cryptech313@gmail.com</email>
+    </developer>
   </developers>
 
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>http://opensource.org/licenses/MIT</url>
-    </license>
-  </licenses>
+  <scm>
+    <connection>scm:git:https://github.com/jenkinsci/golang-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/golang-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/golang-plugin</url>
+    <tag>HEAD</tag>
+  </scm>
 
-  <dependencies>
-    <!-- Required for the @Symbol annotation -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>structs</artifactId>
-      <version>1.20</version>
-    </dependency>
-
-    <!-- Install Pipeline when running locally, for testing -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-aggregator</artifactId>
-      <version>2.6</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Install mock agent plugin when running locally, as it's very useful -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>mock-slave</artifactId>
-      <version>1.14</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  <properties>
+    <gitHubRepo>jenkinsci/golang-plugin</gitHubRepo>
+    <jenkins.baseline>2.555</jenkins.baseline>
+    <jenkins.version>${jenkins.baseline}.3</jenkins.version>
+    <spotbugs.effort>Max</spotbugs.effort>
+    <spotbugs.threshold>Medium</spotbugs.threshold>
+  </properties>
 
   <dependencyManagement>
     <dependencies>
-      <!-- Simplifies inclusion of plugins: https://github.com/jenkinsci/bom -->
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-${jenkins.bom.artifactId}</artifactId>
-        <version>${jenkins.bom.version}</version>
-        <scope>import</scope>
+        <artifactId>bom-2.555.x</artifactId>
+        <version>7237.v5071b_f4589f1</version>
         <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
-  <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
+  <dependencies>
+    <!-- Required for @Symbol annotation -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>structs</artifactId>
+    </dependency>
+
+    <!-- Test dependencies for JenkinsRule and Pipeline execution -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-job</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-cps</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-basic-steps</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-durable-task-step</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>
@@ -89,12 +107,5 @@
       <url>https://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
-
-  <scm>
-    <connection>scm:git:git://github.com/jenkinsci/golang-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/golang-plugin.git</developerConnection>
-    <url>https://github.com/jenkinsci/golang-plugin</url>
-    <tag>HEAD</tag>
-  </scm>
 
 </project>

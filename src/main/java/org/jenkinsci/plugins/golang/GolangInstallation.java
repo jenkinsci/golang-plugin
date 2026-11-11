@@ -60,14 +60,14 @@ public class GolangInstallation extends ToolInstallation implements EnvironmentS
 
         @Override
         public GolangInstallation[] getInstallations() {
-            return Jenkins.getActiveInstance()
+            return Jenkins.get()
                     .getDescriptorByType(GolangBuildWrapper.DescriptorImpl.class)
                     .getInstallations();
         }
 
         @Override
         public void setInstallations(GolangInstallation... installations) {
-            Jenkins.getActiveInstance()
+            Jenkins.get()
                     .getDescriptorByType(GolangBuildWrapper.DescriptorImpl.class)
                     .setInstallations(installations);
         }

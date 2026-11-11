@@ -2,8 +2,6 @@ package org.jenkinsci.plugins.golang;
 
 import org.junit.Test;
 
-import javax.annotation.Nullable;
-
 import static org.jenkinsci.plugins.golang.GolangInstaller.GolangInstallable;
 import static org.jenkinsci.plugins.golang.GolangInstaller.GolangRelease;
 import static org.jenkinsci.plugins.golang.GolangInstaller.InstallationFailedException;
@@ -18,6 +16,10 @@ public class GolangInstallerTest {
     private static final GolangInstallable LINUX_64 = createPackage("linux", "amd64");
     private static final GolangInstallable LINUX_ARM32 = createPackage("linux", "armv6l");
     private static final GolangInstallable LINUX_ARM64 = createPackage("linux", "arm64");
+    private static final GolangInstallable LINUX_RISCV64 = createPackage("linux", "riscv64");
+    private static final GolangInstallable LINUX_PPC64LE = createPackage("linux", "ppc64le");
+    private static final GolangInstallable LINUX_LOONG64 = createPackage("linux", "loong64");
+    private static final GolangInstallable OPENBSD_64 = createPackage("openbsd", "amd64");
     private static final GolangInstallable OS_X_10_6_32 = createPackage("darwin", "386", "10.6");
     private static final GolangInstallable OS_X_10_6_64 = createPackage("darwin", "amd64", "10.6");
     private static final GolangInstallable OS_X_10_8_32 = createPackage("darwin", "386", "10.8");
@@ -120,6 +122,41 @@ public class GolangInstallerTest {
     }
 
     @Test
+    public void testOpenBsdInstallation() throws InstallationFailedException {
+        GolangRelease release = createReleaseInfo();
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "OpenBSD", "amd64", "7.3");
+        assertEquals("Got unexpected package", OPENBSD_64, pkg);
+    }
+
+    @Test
+    public void testLinuxRiscv64Installation() throws InstallationFailedException {
+        GolangRelease release = createReleaseInfo();
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "Linux", "riscv64", "6.1.0");
+        assertEquals("Got unexpected package", LINUX_RISCV64, pkg);
+    }
+
+    @Test
+    public void testLinuxPpc64leInstallation() throws InstallationFailedException {
+        GolangRelease release = createReleaseInfo();
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "Linux", "ppc64le", "5.14.0");
+        assertEquals("Got unexpected package", LINUX_PPC64LE, pkg);
+    }
+
+    @Test
+    public void testLinuxLoong64Installation() throws InstallationFailedException {
+        GolangRelease release = createReleaseInfo();
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "Linux", "loong64", "6.1.0");
+        assertEquals("Got unexpected package", LINUX_LOONG64, pkg);
+    }
+
+    @Test
+    public void testMacOsAliasInstallation() throws InstallationFailedException {
+        GolangRelease release = createReleaseInfo(OS_X_GO_1_5);
+        GolangInstallable pkg = GolangInstaller.getInstallCandidate(release, "macOS", "x86_64", "14.0");
+        assertEquals("Got unexpected package", OS_X_GO_1_5, pkg);
+    }
+
+    @Test
     public void testLatestGo15PackageForOsXVersionReturned() throws InstallationFailedException {
         // Given we have configured a Go 1.5 release we want to install
         GolangRelease release = createReleaseInfo(LINUX_32, LINUX_64, LINUX_ARM64, OS_X_GO_1_5);
@@ -203,7 +240,8 @@ public class GolangInstallerTest {
     }
 
     private static GolangRelease createReleaseInfo() {
-        return createReleaseInfo(FREEBSD_32, FREEBSD_64, LINUX_32, LINUX_64, LINUX_ARM32, LINUX_ARM64,
+        return createReleaseInfo(FREEBSD_32, FREEBSD_64, OPENBSD_64, LINUX_32, LINUX_64, LINUX_ARM32, LINUX_ARM64,
+                LINUX_RISCV64, LINUX_PPC64LE, LINUX_LOONG64,
                 OS_X_10_6_32, OS_X_10_6_64, OS_X_10_8_32, OS_X_10_8_64);
     }
 
@@ -226,7 +264,7 @@ public class GolangInstallerTest {
      * @param arch The CPU architecture value used in a Go archive filename.
      * @param osxVersion Mac OS X version name.
      */
-    private static GolangInstallable createPackage(String os, String arch, @Nullable String osxVersion) {
+    private static GolangInstallable createPackage(String os, String arch, String osxVersion) {
         GolangInstallable pkg = new GolangInstallable();
         pkg.os = os;
         pkg.arch = arch;
