@@ -79,7 +79,6 @@ public class GolangBuildWrapper extends BuildWrapper {
             return true;
         }
 
-        @SuppressFBWarnings("EI_EXPOSE_REP")
         public GolangInstallation[] getInstallations() {
             return installations;
         }
@@ -92,4 +91,3 @@ public class GolangBuildWrapper extends BuildWrapper {
     }
 
 }
-
