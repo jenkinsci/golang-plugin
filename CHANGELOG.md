@@ -1,5 +1,15 @@
 # Version history
 
+## Version 1.5 (Unreleased)
+
+- Modernized plugin build infrastructure to Jenkins baseline 2.555.3 and Java 17/21.
+- Updated plugin parent POM and Jenkins BOM.
+- Added support for additional CPU architectures: `riscv64` (RISC-V 64-bit), `loong64` (LoongArch 64-bit), and `ppc64le` (PowerPC 64-bit LE).
+- Added support for OpenBSD and improved macOS JVM property aliases.
+- Replaced deprecated `Jenkins.getActiveInstance()` with `Jenkins.get()`.
+- Added required `index.jelly` descriptor.
+- Added GitHub Actions CI, security scanning, and automated continuous delivery (JEP-229) workflows.
+
 ## Version 1.4
 January 27, 2021
 
@@ -28,4 +38,4 @@ June 21, 2014
 ## Version 1.0
 June 18, 2014
 
--   Initial release
+- Initial release

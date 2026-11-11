@@ -1,3 +1,9 @@
+target/
+work/
 *~
-target
-work
+*.iml
+.idea/
+.vscode/
+.settings/
+.classpath
+.project
